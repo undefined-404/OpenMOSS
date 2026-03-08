@@ -1,5 +1,7 @@
 # OpenMOSS
 
+LINUX DO 实际效果及项目使用说明：https://linux.do/t/topic/1709670
+
 ## 一、OpenMOSS 是什么？
 
 OpenMOSS（Multi-agent Orchestration & Self-evolving System）是一个基于 [OpenClaw](https://github.com/openclaw/openclaw) 的多 AI Agents 自组织协作平台。它可以实现多 AI Agents 的自组织、自修复、自进化、团队激励等能力，进而实现近乎 100% 多线程多步骤任务的完成度，使 OpenClaw 的任务运行效率得到大幅度提高。
