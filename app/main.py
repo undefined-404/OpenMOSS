@@ -165,9 +165,14 @@ if os.path.isdir(_webui_dist):
     if os.path.isdir(_assets_dir):
         app.mount("/assets", StaticFiles(directory=_assets_dir), name="webui-assets")
 
-    # 所有未匹配路径 → 返回 index.html（SPA 前端路由）
+    # 所有未匹配路径 → 先尝试返回静态文件，再回退到 index.html（SPA 前端路由）
     @app.get("/{full_path:path}", include_in_schema=False)
     async def serve_spa(full_path: str):
+        # 先检查是否有对应的静态文件（如 logo-200.png, favicon.ico 等）
+        static_file = os.path.join(_webui_dist, full_path)
+        if full_path and os.path.isfile(static_file):
+            return FileResponse(static_file)
+        # 否则返回 index.html（SPA 路由）
         index = os.path.join(_webui_dist, "index.html")
         if os.path.isfile(index):
             return FileResponse(index)
