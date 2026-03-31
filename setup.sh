@@ -14,7 +14,6 @@ fi
 # ============================================================
 
 REPO="uluckyXH/OpenMOSS"
-INSTALL_DIR="${OPENMOSS_DIR:-./openmoss}"
 DOWNLOAD_URL="https://github.com/$REPO/archive/refs/heads/main.tar.gz"
 
 GREEN='\033[0;32m'
@@ -42,11 +41,23 @@ if ! command -v curl >/dev/null 2>&1; then
     exit 1
 fi
 
+# ---------- 判断安装目录：当前目录 or ./openmoss/ ----------
+if [ -d "./app" ] && [ -f "./start.sh" ]; then
+    # 已经在 openmoss 目录内
+    INSTALL_DIR="."
+elif [ -d "./openmoss/app" ] && [ -f "./openmoss/start.sh" ]; then
+    # 在上层目录，openmoss 是子目录
+    INSTALL_DIR="./openmoss"
+else
+    # 首次安装
+    INSTALL_DIR="${OPENMOSS_DIR:-./openmoss}"
+fi
+
 # ---------- 判断：首次安装 or 更新 ----------
 IS_UPDATE=false
 if [ -d "$INSTALL_DIR/app" ] && [ -f "$INSTALL_DIR/start.sh" ]; then
     IS_UPDATE=true
-    info "检测到已有安装，执行更新..."
+    info "检测到已有安装 ($INSTALL_DIR)，执行更新..."
 
     # 如果服务正在运行，先停掉
     if [ -f "$INSTALL_DIR/.openmoss.pid" ]; then
