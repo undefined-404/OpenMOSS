@@ -178,6 +178,7 @@ PYTHONUNBUFFERED=1 nohup "$VENV_DIR/bin/python" -m uvicorn app.main:app \
     > "$LOG_DIR/server.log" 2>&1 &
 
 SERVER_PID=$!
+disown $SERVER_PID 2>/dev/null || true
 echo $SERVER_PID > "$PID_FILE"
 
 # ---------- 等待服务就绪 ----------
