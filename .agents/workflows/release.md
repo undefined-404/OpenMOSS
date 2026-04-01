@@ -4,79 +4,56 @@ description: Build and release from dev branch to main branch
 
 # Release Workflow: dev → main
 
-## Prerequisites
+## Overview
 
-- **dev branch**: Source code only, `static/` is in `.gitignore`
-- **main branch**: Source code + compiled `static/` directory (for deployment)
-- Build artifacts are NOT tracked on dev to avoid merge conflicts
+- **dev branch**: 后端开发分支
+- **main branch**: 稳定发布分支
+- **webui branch**: 前端独立分支（orphan），通过 tag 独立发版
+- 前端静态文件由后端 WebUIUpdater 服务启动时自动从 GitHub Release 下载，main 分支不再需要 `static/`
 
 ## Steps
 
+// turbo
 ### 1. Ensure dev branch is ready
 
 ```bash
 git checkout dev
-git status  # make sure working tree is clean
-```
-
-### 2. Build frontend assets
-
-```bash
-cd webui
-npm run build   # outputs to ../static/
-cd ..
+git pull origin dev
+git status
 ```
 
 // turbo
-### 3. Switch to main and merge dev
+### 2. Switch to main and merge dev
 
 ```bash
 git checkout main
+git pull origin main
 git merge dev -m "merge: dev → main"
 ```
 
-### 4. Remove `static/` from .gitignore (if merged from dev)
-
-```bash
-# Check if .gitignore contains static/ (merged from dev)
-grep -n "^static/" .gitignore && sed -i '' '/^static\/$/d' .gitignore
-```
-
-### 5. Commit build artifacts
-
-```bash
-git add static/ .gitignore
-git commit -m "build: update static assets"
-```
-
-### 6. Push to remote
+### 3. Push to remote
 
 ```bash
 git push origin main
 ```
 
 // turbo
-### 7. Switch back to dev
+### 4. Switch back to dev
 
 ```bash
 git checkout dev
 ```
 
-## First-Time Setup (one-time only)
+## WebUI Release (独立流程)
 
-If dev branch is still tracking `static/`, clean it up first:
+前端版本通过在 `webui` 分支上打 tag 发布：
 
 ```bash
-git checkout dev
-
-# Remove static/ from git tracking (keep local files)
-git rm -r --cached static/
-
-# Add static/ to dev's .gitignore
-echo "static/" >> .gitignore
-
-git add .gitignore
-git commit -m "chore: stop tracking static/ on dev branch"
+# 在 webui 分支上打 tag（触发 CI 自动构建并发布到 GitHub Release）
+git checkout webui
+git tag webui-v0.0.1
+git push origin webui-v0.0.1
 ```
 
-> ⚠️ **Note**: main branch's `.gitignore` must NOT exclude `static/`, since main needs to track it for deployment. After merging dev → main, always verify and remove the `static/` line from main's `.gitignore` if present (Step 4).
+> CI 会自动执行: npm ci → npm run build-only → 打包 webui-dist.tar.gz → 发布到 GitHub Release
+> 后端 WebUIUpdater 会在启动时或通过管理端 API 自动拉取最新 Release

@@ -657,6 +657,18 @@ npm run lint
 
 ---
 
+## Contributors
+
+Thanks to all the developers who have contributed to OpenMOSS! 🙏
+
+<a href="https://github.com/uluckyXH/OpenMOSS/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=uluckyXH/OpenMOSS" />
+</a>
+
+> Want to join us? Check out the [Contributing Guide](CONTRIBUTING.md) to get started!
+
+---
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=uluckyXH/OpenMOSS&type=Date)](https://star-history.com/#uluckyXH/OpenMOSS&Date)
